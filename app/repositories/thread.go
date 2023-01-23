@@ -30,9 +30,7 @@ func NewThreadRepoImpl(db *pgx.ConnPool) ThreadRepoImpl {
 }
 
 func (Thread ThreadRepoImpl) CreatePost(timer time.Time, slug string, id int, posts []models.Post) ([]models.Post, error) {
-
 	tx, err := Thread.dbLauncher.Begin()
-
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -68,17 +66,17 @@ func (Thread ThreadRepoImpl) CreatePost(timer time.Time, slug string, id int, po
 		posts[iter].Thread = threadId
 		posts[iter].Forum = forumSlug
 		posts[iter].IsEdited = false
+		posts[iter].Id = int64(id)
 
 		var err error
 
 		posts[iter].Path = pgtype.Int8Array{
-			Elements:   nil,
-			Dimensions: nil,
+			Elements:   []pgtype.Int8{},
+			Dimensions: []pgtype.ArrayDimension{},
 			Status:     1,
 		}
 
-		err = tx.QueryRow(stmt.Name, timer, posts[iter].Message, posts[iter].Parent, posts[iter].Author, forumSlug, threadId, posts[iter].Path).Scan(&posts[iter].Created, &posts[iter].Id)
-
+		err = tx.QueryRow(stmt.Name, timer, posts[iter].Message, posts[iter].Parent, posts[iter].Author, forumSlug, threadId, []int64{}).Scan(&posts[iter].Created, &posts[iter].Id)
 		if err != nil {
 			tx.Rollback()
 			if err.Error() == "ERROR: Parent post was created in another thread (SQLSTATE 00404)" {

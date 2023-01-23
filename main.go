@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/labstack/echo"
 	"vk_db_project/app/handlers"
 	repos "vk_db_project/app/repositories"
 	usecases "vk_db_project/app/uscases"
-	"time"
 
 	"github.com/jackc/pgx"
 )

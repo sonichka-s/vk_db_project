@@ -1,12 +1,12 @@
-FROM golang:1.14 AS build
+FROM golang:1.17 AS build
 
-ADD . /opt/app
-WORKDIR /opt/app
-RUN go build ./main.go
+ADD . /app
+WORKDIR /app
+RUN go build -o main ./main.go
 
 FROM ubuntu:20.04
 
-MAINTAINER sonichka-s
+MAINTAINER nikita chernyh
 
 RUN apt-get -y update && apt-get install -y tzdata
 
@@ -23,7 +23,7 @@ RUN /etc/init.d/postgresql start &&\
     createdb -O docker docker &&\
     /etc/init.d/postgresql stop
 
-RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/$PGVER/main/pg_hba.conf
+RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/$PGVER/main/pg_hba.conf
 
 RUN echo "listen_addresses='*'\nsynchronous_commit = off\nfsync = off\nshared_buffers = 256MB\neffective_cache_size = 1536MB\n" >> /etc/postgresql/$PGVER/main/postgresql.conf
 RUN echo "wal_buffers = 1MB\nwal_writer_delay = 50ms\nrandom_page_cost = 1.0\nmax_connections = 100\nwork_mem = 8MB\nmaintenance_work_mem = 128MB\ncpu_tuple_cost = 0.0030\ncpu_index_tuple_cost = 0.0010\ncpu_operator_cost = 0.0005" >> /etc/postgresql/$PGVER/main/postgresql.conf
@@ -47,8 +47,9 @@ USER root
 WORKDIR /usr/src/app
 
 COPY . .
-COPY --from=build /opt/app/main .
+COPY --from=build /app/main .
 
 EXPOSE 5000
 ENV PGPASSWORD docker
-CMD service postgresql start && psql -h localhost -d docker -U docker -p 5432 -a -q -f ./init/init.sql && ./main
+CMD service postgresql start &&  psql -h localhost -d docker -U docker -p 5432 -a -q -f ./db/db.sql && ./main
+

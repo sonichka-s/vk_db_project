@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  perf_server:
+    container_name: forumServer
+    build:
+      context: .
+    ports:
+      - '12345:5000'
