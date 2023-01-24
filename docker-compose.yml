@@ -6,4 +6,4 @@ services:
     build:
       context: .
     ports:
-      - '12345:5000'
+      - '5000:5000'

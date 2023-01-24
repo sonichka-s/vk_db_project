@@ -80,7 +80,7 @@ func (Thread ThreadRepoImpl) CreatePost(timer time.Time, slug string, id int, po
 		if err != nil {
 			tx.Rollback()
 			if err.Error() == "ERROR: Parent post was created in another thread (SQLSTATE 00404)" {
-				return nil, errors.New("Parent post was created in another thread")
+				return nil, errors.New("Parent post was created in another thread!")
 			}
 			return nil, errors.New("no user")
 		}

@@ -6,7 +6,7 @@ RUN go build -o main ./main.go
 
 FROM ubuntu:20.04
 
-MAINTAINER nikita chernyh
+MAINTAINER sonichka-s
 
 RUN apt-get -y update && apt-get install -y tzdata
 
